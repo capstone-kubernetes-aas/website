@@ -1,0 +1,31 @@
+{
+  "name": "k8s-pipeline-webpage",
+  "version": "1.0.0",
+  "description": "The web service that displays the UI for ... K8s pipeline through a React webpage.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "minify": "exit 1",
+    "build": "npx babel src --out-dir public --presets @babel/preset-react",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capstone-kubernetes-aas/website.git"
+  },
+  "author": "Nathan Hausman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/capstone-kubernetes-aas/website/issues"
+  },
+  "homepage": "https://github.com/capstone-kubernetes-aas/website#readme",
+  "dependencies": {
+    "express": "^4.17.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.7",
+    "@babel/preset-react": "^7.16.7"
+  }
+}

@@ -1,0 +1,29 @@
+body {
+    font-family: 'Oxygen', Arial, sans-serif;
+    font-size: 100%;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+h2 {
+    font-size: 1.875em;
+}
+
+p {
+    font-size: 0.875em;
+}
+
+
+.header {
+    background-color: black;
+    color: white;
+
+}
+
+.sidebar-list {
+    list-style-type: none;
+}
+
+
