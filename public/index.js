@@ -23,6 +23,15 @@ class Header extends React.Component {
 }
 
 class Sidebar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(e) {
+    this.props.onContentChange(e);
+  }
+
   render() {
     return /*#__PURE__*/React.createElement("div", {
       className: "sidebar"
@@ -31,24 +40,27 @@ class Sidebar extends React.Component {
     }, /*#__PURE__*/React.createElement("li", {
       className: "sidebar-tab"
     }, /*#__PURE__*/React.createElement("button", {
-      className: "sidebar-option",
+      className: this.props.activeContent == "deploy-service" ? "active sidebar-option" : "sidebar-option",
       id: "deploy-service",
       name: "deploy-service",
-      type: "button"
+      type: "button",
+      onClick: this.handleClick
     }, "Deploy New Service")), /*#__PURE__*/React.createElement("li", {
       className: "sidebar-tab"
     }, /*#__PURE__*/React.createElement("button", {
-      className: "sidebar-option",
+      className: this.props.activeContent == "manage-services" ? "active sidebar-option" : "sidebar-option",
       id: "manage-services",
       name: "manage-services",
-      type: "button"
+      type: "button",
+      onClick: this.handleClick
     }, "Manage Services")), /*#__PURE__*/React.createElement("li", {
       className: "sidebar-tab"
     }, /*#__PURE__*/React.createElement("button", {
-      className: "sidebar-option",
+      className: this.props.activeContent == "admin-settings" ? "active sidebar-option" : "sidebar-option",
       id: "admin-settings",
       name: "admin-settings",
-      type: "button"
+      type: "button",
+      onClick: this.handleClick
     }, "Admin Settings"))));
   }
 
@@ -75,23 +87,52 @@ class AdminSettings extends React.Component {
 
 }
 
-class Content extends React.Component {
+class Error404Page extends React.Component {
   render() {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "content"
-    }, /*#__PURE__*/React.createElement(Sidebar, null), /*#__PURE__*/React.createElement(DeployService, null));
+    return /*#__PURE__*/React.createElement("p", null, "Error 404, unknown destination");
   }
 
 }
 
-class Page extends React.Component {
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeContent: "deploy-service"
+    };
+    this.handleContentChange = this.handleContentChange.bind(this);
+  }
+
+  handleContentChange(e) {
+    this.setState({
+      activeContent: e.target.name
+    });
+  }
+
   render() {
+    let content;
+
+    if (this.state.activeContent == "deploy-service") {
+      content = /*#__PURE__*/React.createElement(DeployService, null);
+    } else if (this.state.activeContent == "manage-services") {
+      content = /*#__PURE__*/React.createElement(ClusterManagement, null);
+    } else if (this.state.activeContent == "admin-settings") {
+      content = /*#__PURE__*/React.createElement(AdminSettings, null);
+    } else {
+      content = /*#__PURE__*/React.createElement(Error404Page, null);
+    }
+
     return /*#__PURE__*/React.createElement("div", {
-      id: "page"
-    }, /*#__PURE__*/React.createElement(Header, null), /*#__PURE__*/React.createElement(Content, null));
+      id: "App"
+    }, /*#__PURE__*/React.createElement(Header, null), /*#__PURE__*/React.createElement(Sidebar, {
+      activeContent: this.state.activeContent,
+      onContentChange: this.handleContentChange
+    }), /*#__PURE__*/React.createElement("div", {
+      className: "content"
+    }, content));
   }
 
 }
 
 const domContainer = document.querySelector('#root');
-ReactDOM.render( /*#__PURE__*/React.createElement(Page, null), domContainer);
+ReactDOM.render( /*#__PURE__*/React.createElement(App, null), domContainer);
