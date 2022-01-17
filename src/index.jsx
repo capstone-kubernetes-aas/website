@@ -11,7 +11,7 @@ class Header extends React.Component {
         return (
             <div className="header">
                 <div className="title">
-                    <h1>[Name Pending]</h1>
+                    <h1 className="title-text">[Name Pending]</h1>
                 </div>
                 <div className="logout">
                     <LogoutButton />
@@ -36,9 +36,9 @@ class Sidebar extends React.Component {
         return (
             <div className="sidebar">
                 <ul className="sidebar-list">
-                    <li className="sidebar-tab"><button className={this.props.activeContent == "deploy-service" ? "active sidebar-option" : "sidebar-option"} id="deploy-service" name="deploy-service" type="button" onClick={this.handleClick}>Deploy New Service</button></li>
-                    <li className="sidebar-tab"><button className={this.props.activeContent == "manage-services" ? "active sidebar-option" : "sidebar-option"} id="manage-services" name="manage-services" type="button" onClick={this.handleClick}>Manage Services</button></li>
-                    <li className="sidebar-tab"><button className={this.props.activeContent == "admin-settings" ? "active sidebar-option" : "sidebar-option"} id="admin-settings" name="admin-settings" type="button" onClick={this.handleClick}>Admin Settings</button></li>
+                    <li className="sidebar-tab"><button className={this.props.activeContent == "deploy-service" ? "active sidebar-option" : "sidebar-option"} id="deploy-service-button" name="deploy-service" type="button" onClick={this.handleClick}>Deploy New Service</button></li>
+                    <li className="sidebar-tab"><button className={this.props.activeContent == "manage-services" ? "active sidebar-option" : "sidebar-option"} id="manage-services-button" name="manage-services" type="button" onClick={this.handleClick}>Manage Services</button></li>
+                    <li className="sidebar-tab"><button className={this.props.activeContent == "admin-settings" ? "active sidebar-option" : "sidebar-option"} id="admin-settings-button" name="admin-settings" type="button" onClick={this.handleClick}>Admin Settings</button></li>
                 </ul>
             </div>
         );
@@ -48,21 +48,36 @@ class Sidebar extends React.Component {
 
 class DeployService extends React.Component {
     render() {
-        return <p>Deploy new service not enabled yet</p>;
+        return (
+            <div className="content-wrapper" id="deploy-service">
+                <h2>Deploy New Service</h2>
+                <p>Deploy new service not enabled yet</p>
+            </div>
+        );
     }
 }
 
 
 class ClusterManagement extends React.Component {
     render() {
-        return <p>Manage services not enabled yet</p>;
+        return (
+            <div className="content-wrapper" id="manage-services">
+                <h2>Manage services</h2>
+                <p>Manage services not enabled yet</p>
+            </div>
+        );
     }
 }
 
 
 class AdminSettings extends React.Component {
     render() {
-        return <p>Admin settings not enabled yet</p>;
+        return (
+            <div className="content-wrapper" id="admin-settings">
+                <h2>Admin Settings</h2>
+                <p>Admin settings not enabled yet</p>
+            </div>
+        );
     }
 }
 
@@ -98,11 +113,13 @@ class App extends React.Component {
         }
 
         return (
-            <div id="App">
+            <div id="app">
                 <Header />
-                <Sidebar activeContent={this.state.activeContent} onContentChange={this.handleContentChange} />
-                <div className="content">
-                    {content}
+                <div className="below-header">
+                    <Sidebar activeContent={this.state.activeContent} onContentChange={this.handleContentChange} />
+                    <div className="content">
+                        {content}
+                    </div>
                 </div>
             </div>
         );

@@ -15,7 +15,9 @@ class Header extends React.Component {
       className: "header"
     }, /*#__PURE__*/React.createElement("div", {
       className: "title"
-    }, /*#__PURE__*/React.createElement("h1", null, "[Name Pending]")), /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("h1", {
+      className: "title-text"
+    }, "[Name Pending]")), /*#__PURE__*/React.createElement("div", {
       className: "logout"
     }, /*#__PURE__*/React.createElement(LogoutButton, null)));
   }
@@ -41,7 +43,7 @@ class Sidebar extends React.Component {
       className: "sidebar-tab"
     }, /*#__PURE__*/React.createElement("button", {
       className: this.props.activeContent == "deploy-service" ? "active sidebar-option" : "sidebar-option",
-      id: "deploy-service",
+      id: "deploy-service-button",
       name: "deploy-service",
       type: "button",
       onClick: this.handleClick
@@ -49,7 +51,7 @@ class Sidebar extends React.Component {
       className: "sidebar-tab"
     }, /*#__PURE__*/React.createElement("button", {
       className: this.props.activeContent == "manage-services" ? "active sidebar-option" : "sidebar-option",
-      id: "manage-services",
+      id: "manage-services-button",
       name: "manage-services",
       type: "button",
       onClick: this.handleClick
@@ -57,7 +59,7 @@ class Sidebar extends React.Component {
       className: "sidebar-tab"
     }, /*#__PURE__*/React.createElement("button", {
       className: this.props.activeContent == "admin-settings" ? "active sidebar-option" : "sidebar-option",
-      id: "admin-settings",
+      id: "admin-settings-button",
       name: "admin-settings",
       type: "button",
       onClick: this.handleClick
@@ -68,21 +70,30 @@ class Sidebar extends React.Component {
 
 class DeployService extends React.Component {
   render() {
-    return /*#__PURE__*/React.createElement("p", null, "Deploy new service not enabled yet");
+    return /*#__PURE__*/React.createElement("div", {
+      className: "content-wrapper",
+      id: "deploy-service"
+    }, /*#__PURE__*/React.createElement("h2", null, "Deploy New Service"), /*#__PURE__*/React.createElement("p", null, "Deploy new service not enabled yet"));
   }
 
 }
 
 class ClusterManagement extends React.Component {
   render() {
-    return /*#__PURE__*/React.createElement("p", null, "Manage services not enabled yet");
+    return /*#__PURE__*/React.createElement("div", {
+      className: "content-wrapper",
+      id: "manage-services"
+    }, /*#__PURE__*/React.createElement("h2", null, "Manage services"), /*#__PURE__*/React.createElement("p", null, "Manage services not enabled yet"));
   }
 
 }
 
 class AdminSettings extends React.Component {
   render() {
-    return /*#__PURE__*/React.createElement("p", null, "Admin settings not enabled yet");
+    return /*#__PURE__*/React.createElement("div", {
+      className: "content-wrapper",
+      id: "admin-settings"
+    }, /*#__PURE__*/React.createElement("h2", null, "Admin Settings"), /*#__PURE__*/React.createElement("p", null, "Admin settings not enabled yet"));
   }
 
 }
@@ -123,13 +134,15 @@ class App extends React.Component {
     }
 
     return /*#__PURE__*/React.createElement("div", {
-      id: "App"
-    }, /*#__PURE__*/React.createElement(Header, null), /*#__PURE__*/React.createElement(Sidebar, {
+      id: "app"
+    }, /*#__PURE__*/React.createElement(Header, null), /*#__PURE__*/React.createElement("div", {
+      className: "below-header"
+    }, /*#__PURE__*/React.createElement(Sidebar, {
       activeContent: this.state.activeContent,
       onContentChange: this.handleContentChange
     }), /*#__PURE__*/React.createElement("div", {
       className: "content"
-    }, content));
+    }, content)));
   }
 
 }
