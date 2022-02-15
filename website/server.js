@@ -25,12 +25,13 @@ app.use(express.json());
 // });
 
 app.post('/deploy', function (req, res) {
-    var reqBody = {
+    let reqBody = {
         repo_url: req.body.repoUrl.toString(),
         repo_branch: req.body.repoBranch.toString(),
-        deployment_config: null,
+        deploy_config: null,
         service_config: null
     };
+
     if (!req.body.useRepoConfig) {
         const labels = {
             app: req.body.appName.toString()//,
@@ -38,7 +39,7 @@ app.post('/deploy', function (req, res) {
             //role: hasOwn(req.body.role) ? req.body.appRole.toString() : null
         };
 
-        reqBody.deployment_config = {
+        reqBody.deploy_config = {
             apiVersion: "apps/v1",
             kind: "Deployment",
             metadata: {
@@ -77,7 +78,7 @@ app.post('/deploy', function (req, res) {
             spec: {
                 selector: {
                     app: labels.app//,
-                     //tier: labels.tier,
+                    //tier: labels.tier,
                     //role: labels.role
                 },
                 ports: [{
@@ -88,6 +89,14 @@ app.post('/deploy', function (req, res) {
                 type: "ClusterIP"
             }
         };
+    } else {
+        if (req.body.deployConfigPath.toString() != '') {
+            reqBody.deploy_config = req.body.deployConfigPath.toString();
+        }
+
+        if (req.body.serviceConfigPath.toString() != '') {
+            reqBody.service_config = req.body.serviceConfigPath.toString();
+        }
     }
 
     // let url = "http://localhost:8800/"
