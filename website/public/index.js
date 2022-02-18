@@ -193,19 +193,19 @@ class DeployService extends React.Component {
     } else {
       configGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
         for: "deployConfigPath"
-      }, "Deployment Config Path"), /*#__PURE__*/React.createElement("input", {
+      }, "Deployment Config Path:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
         id: "deploy-config-path",
         name: "deployConfigPath",
         value: this.state.deployConfigPath,
         onChange: this.handleChange
       }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
-        for: "deployServicePath"
-      }, "Service Config Path"), /*#__PURE__*/React.createElement("input", {
+        for: "serviceConfigPath"
+      }, "Service Config Path:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        id: "deploy-service-path",
-        name: "deployServicePath",
-        value: this.state.deployServicePath,
+        id: "service-config-path",
+        name: "serviceConfigPath",
+        value: this.state.serviceConfigPath,
         onChange: this.handleChange
       }));
     }

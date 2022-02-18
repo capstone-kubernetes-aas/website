@@ -129,10 +129,10 @@ class DeployService extends React.Component {
         } else {
             configGen = (
                 <div>
-                    <label for="deployConfigPath">Deployment Config Path</label>
+                    <label for="deployConfigPath">Deployment Config Path:</label>
                     <input type="text" id="deploy-config-path" name="deployConfigPath" value={this.state.deployConfigPath} onChange={this.handleChange} /><br/>
-                    <label for="deployServicePath">Service Config Path</label>
-                    <input type="text" id="deploy-service-path" name="deployServicePath" value={this.state.deployServicePath} onChange={this.handleChange} />
+                    <label for="serviceConfigPath">Service Config Path:</label>
+                    <input type="text" id="service-config-path" name="serviceConfigPath" value={this.state.serviceConfigPath} onChange={this.handleChange} />
                 </div>
             );
         }

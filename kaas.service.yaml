@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Service
+
+metadata:
+  name: pipeline-website-service
+  labels:
+    app: pipeline-website
+
+spec:
+  selector:
+    app: pipeline-website
+  ports:
+    - port: 80
+      targetPort: 28070
+      protocol: TCP
+  type: ClusterIP
