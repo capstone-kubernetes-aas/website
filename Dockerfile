@@ -1,5 +1,5 @@
 FROM arm64v8/node:17.3-bullseye
-EXPOSE tcp/28070
+EXPOSE 28070
 
 # copy over the files and install
 # the production dependencies

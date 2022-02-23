@@ -18,3 +18,5 @@ spec:
       containers:
         - name: website
           image: pipeline-website:latest
+
+  replicas: 1
