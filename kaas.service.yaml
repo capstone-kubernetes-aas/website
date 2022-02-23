@@ -12,6 +12,5 @@ spec:
     app: pipeline-website
   ports:
     - port: 28070
-      nodePort: 80
       targetPort: 28070
       protocol: TCP
