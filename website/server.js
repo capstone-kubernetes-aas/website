@@ -56,7 +56,7 @@ app.post('/deploy', function (req, res) {
                     spec: {
                         containers: [{
                             name: req.body.containerName,
-                            image: req.body.containerImage
+                            image: 'localhost:5000/' + req.body.containerImage
                         }],
                     }
                 },
@@ -99,17 +99,20 @@ app.post('/deploy', function (req, res) {
         }
     }
 
-    // let url = "http://localhost:8800/"
-    // let requestOptions = {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(reqBody)
-    // }
+    let request = JSON.stringify(reqBody);
+    console.log("> New request for deployment: " + request);
+    console.log("   Sending request to https://localhost:8800");
 
-    // let promise = fetch(url, requestOptions);
-
-    console.log(JSON.stringify(reqBody));
-    res.status(200).json({image: "test"});
+    let url = "http://localhost:8800/"
+    let requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: request
+    }
+    
+    let promise = fetch(url, requestOptions);
+    console.log("Returned status " + promise.status.toString() + ", body: " + JSON.stringify(promise.json()));
+    res.status(promise.status).json(promise.json());
 });
 
 
