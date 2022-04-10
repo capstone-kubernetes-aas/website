@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
         - name: website
-          image: pipeline-website:latest
+          image: localhost:5000/pipeline-website:latest
 
   replicas: 1
