@@ -106,7 +106,7 @@ app.post('/deploy', function (req, res) {
     console.log("> New request for deployment: " + request);
     console.log("   Sending request to https://localhost:8800");
 
-    let url = "http://localhost:8800/"
+    let url = "http://localhost:8800/build"
     let requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,6 +119,8 @@ app.post('/deploy', function (req, res) {
     console.log("Returned status " + response.status.toString() + ", body: " + JSON.stringify(body));
     res.status(response.status).json(body);
 });
+
+app.post()
 
 
 // open up server to traffic
