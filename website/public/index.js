@@ -102,7 +102,7 @@ class DeployService extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const url = window.location.href + 'deploy/';
+    const url = window.location.href + 'deploy';
     const requestOptions = {
       method: 'POST',
       headers: {

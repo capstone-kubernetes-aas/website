@@ -1,6 +1,9 @@
 // require express
 var express = require('express');
 
+// import fetch
+var fetch = require('node-fetch');
+
 // parse command line args
 var parseArgs = require('minimist');
 var argv = parseArgs(process.argv.slice(2), opts={
@@ -110,9 +113,11 @@ app.post('/deploy', function (req, res) {
         body: request
     }
     
-    let promise = fetch(url, requestOptions);
-    console.log("Returned status " + promise.status.toString() + ", body: " + JSON.stringify(promise.json()));
-    res.status(promise.status).json(promise.json());
+    let response = fetch(url, requestOptions);
+    let body = response.json();
+
+    console.log("Returned status " + response.status.toString() + ", body: " + JSON.stringify(body));
+    res.status(response.status).json(body);
 });
 
 
