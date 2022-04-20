@@ -1,11 +1,11 @@
 // require express
-var express = require('express');
+const express = require('express');
 
-// import fetch
-var fetch = require('node-fetch');
+// import axios
+const axios = require('axios'); 
 
 // parse command line args
-var parseArgs = require('minimist');
+const parseArgs = require('minimist');
 var argv = parseArgs(process.argv.slice(2), opts={
     "string": "host",
     "default": {"port": 28070}
@@ -23,11 +23,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 // set up routing
-// app.get('/', function (req, res) {
-//     res.redirect(200, "/index.html");
-// });
-
-app.post('/deploy', function (req, res) {
+app.post('/deploy', async function (req, res) {
     let reqBody = {
         repo_url: req.body.repoUrl.toString(),
         repo_branch: req.body.repoBranch.toString(),
@@ -104,21 +100,43 @@ app.post('/deploy', function (req, res) {
 
     let request = JSON.stringify(reqBody);
     console.log("> New request for deployment: " + request);
-    console.log("   Sending request to https://localhost:8800");
-
-    let url = "http://localhost:8800/build"
-    let requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: request
-    }
+    console.log("   Sending request to https://localhost:8800/build");
     
-    let response = fetch(url, requestOptions);
-    let body = response.json();
+    let status;
+    let resBody;
+    let url = 'http://localhost:8800/build';
+    //let url = 'http://localhost:28070/build';
 
-    console.log("Returned status " + response.status.toString() + ", body: " + JSON.stringify(body));
-    res.status(response.status).json(body);
+    await axios.post(url, reqBody, {headers: {"content-type": "application/json"}})
+        .then(function (response) {
+            console.log("Response received, status OK");
+            status = response.status;
+            resBody = response.data;
+        })
+        .catch(function (error) {
+            if (error.response) {
+                console.log("Error: response status = " + error.response.status.toString());
+                console.log("data = " + JSON.stringify(error.response.data));
+                status = error.response.status;
+                resBody = error.response.data;
+            } else if (error.request) {
+                console.log("Error: no response, returning status code 502");
+                status = 502;
+                resBody = {err: "Bad gateway."};
+            } else {
+                console.log("Error: unknown cause, returning status code 500");
+                status = 500;
+                resBody = {err: "Unknown internal server error: " + err.message};
+            }
+        });
+
+    //console.log("Status: " + status.toString() + "\nBody: " + JSON.stringify(resBody));
+    res.status(status).json(resBody);
 });
+
+// app.post('/build', function (req, res) {
+//     res.status(500).json({err: "Failed to build: <build error>"});
+// });
 
 // open up server to traffic
 if ("host" in argv) {

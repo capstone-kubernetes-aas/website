@@ -79,25 +79,25 @@ class DeployService extends React.Component {
         });
     }
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
         event.preventDefault();
 
-        const url = window.location.href + 'deploy';
-        const requestOptions = {
+        let url = window.location.href + 'deploy';
+        let requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(this.state)
         };
 
-        let promise = fetch(url, requestOptions);
-        let resCode = promise.status;
-        
-        if (resCode == 200) {
+        try {
+            let res = await fetch(url, requestOptions);
+            let body = await res.json();
+            if (!res.ok) {
+                throw new Error("Status code " + res.status.toString() + " (" + res.statusText + ")\n" + JSON.stringify(body));
+            }
             window.location.reload(true);
-        } else if (resCode == 400 || resCode == 500) {
-            alert("Response code " + resCode.toString() + "\n" + promise.json().err.toString());
-        } else {
-            alert("Unknown response code: " + resCode.toString() + "\n" + JSON.stringify(promise.json()));
+        } catch (error) {
+            alert(error.message);
         }
     }
 
