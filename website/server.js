@@ -104,8 +104,8 @@ app.post('/deploy', async function (req, res) {
     
     let status;
     let resBody;
-    let url = 'http://127.0.0.1:8800/build';
-    //let url = 'http://localhost:28070/build';
+    //let url = 'http://127.0.0.1:8800/build';
+    let url = 'http://localhost:28070/build';
 
     await axios.post(url, reqBody, {headers: {"content-type": "application/json"}})
         .then(function (response) {
