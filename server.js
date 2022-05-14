@@ -2,7 +2,7 @@
 const express = require('express');
 
 // import axios
-const axios = require('axios'); 
+const axios = require('axios');
 
 // parse command line args
 const parseArgs = require('minimist');
@@ -55,7 +55,7 @@ app.post('/deploy', async function (req, res) {
                     spec: {
                         containers: [{
                             name: req.body.containerName,
-                            image: /*'localhost:5000/' +*/req.body.containerImage
+                            image: req.body.containerImage
                         }],
                     }
                 },
@@ -101,11 +101,11 @@ app.post('/deploy', async function (req, res) {
     let request = JSON.stringify(reqBody);
     console.log("> New request for deployment: " + request);
     console.log("   Sending request to https://localhost:8800/build");
-    
+
     let status;
     let resBody;
-    //let url = 'http://127.0.0.1:12345/build';
     let url = 'http://127.0.0.1:8800/build';
+    //let url = 'http://127.0.0.1:12345/build';
 
     await axios.post(url, reqBody, {headers: {"content-type": "application/json"}})
         .then(function (response) {
