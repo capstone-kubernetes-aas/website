@@ -55,7 +55,7 @@ app.post('/deploy', async function (req, res) {
                     spec: {
                         containers: [{
                             name: req.body.containerName,
-                            image: /*'localhost:5000/' +*/req.body.containerImage
+                            image: req.body.containerImage
                         }],
                     }
                 },
@@ -104,8 +104,8 @@ app.post('/deploy', async function (req, res) {
 
     let status;
     let resBody;
-    //let url = 'http://127.0.0.1:12345/build';
     let url = 'http://127.0.0.1:8800/build';
+    //let url = 'http://127.0.0.1:12345/build';
 
     await axios.post(url, reqBody, {headers: {"content-type": "application/json"}})
         .then(function (response) {
