@@ -64,7 +64,7 @@ app.post('/deploy', async function (req, res) {
         };
 
         reqBody.service_config = {
-            apiVersion: "apps/v1",
+            apiVersion: "v1",
             kind: "Service",
             metadata: {
                 name: labels.app + "-service",
