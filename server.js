@@ -81,8 +81,8 @@ app.post('/deploy', async function (req, res) {
                     //role: labels.role
                 },
                 ports: [{
-                    port: req.body.servicePort,
-                    targetPort: req.body.containerPort,
+                    port: parseInt(req.body.servicePort),
+                    targetPort: parseInt(req.body.containerPort),
                     protocol: req.body.netProtocol
                 }],
                 type: "ClusterIP"
