@@ -74,6 +74,7 @@ app.post('/deploy', async function (req, res) {
     }
 
     if (!req.body.useRepoServiceConfig) {
+        let projectName = req.body.appName.toString();
         if (req.body.openToNetwork) {
             reqBody.service_config = {
                 apiVersion: "v1",

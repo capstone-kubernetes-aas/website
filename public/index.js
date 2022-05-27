@@ -116,6 +116,8 @@ class DeployService extends React.Component {
 
       if (!res.ok) {
         throw new Error("Status code " + res.status.toString() + " (" + res.statusText + ")\n" + JSON.stringify(body));
+      } else {
+        alert("Deployment created!");
       } //window.location.reload(true);
 
     } catch (error) {
@@ -126,7 +128,6 @@ class DeployService extends React.Component {
   render() {
     let deployConfigGen;
     let serviceConfigGen;
-    let networkConfigGen;
 
     if (!this.state.useRepoDeployConfig) {
       deployConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
@@ -168,22 +169,39 @@ class DeployService extends React.Component {
       }));
     }
 
-    if (this.state.openToNetwork) {
-      networkConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-        htmlFor: "nodePort"
-      }, "Network Port (must be between 30000-32767, leave blank for random):"), /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        id: "node-port",
-        name: "nodePort",
-        value: this.state.nodePort,
-        onChange: this.handleChange
-      }));
-    } else {
-      networkConfigGen = /*#__PURE__*/React.createElement("div", null);
-    }
-
     if (!this.state.useRepoServiceConfig) {
-      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+      let appConfigGen;
+      let networkConfigGen;
+
+      if (this.state.useRepoDeployConfig) {
+        appConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+          htmlFor: "appName"
+        }, "Application Name:"), /*#__PURE__*/React.createElement("input", {
+          type: "text",
+          id: "app-name",
+          name: "appName",
+          value: this.state.appName,
+          onChange: this.handleChange
+        }), /*#__PURE__*/React.createElement("br", null));
+      } else {
+        appConfigGen = /*#__PURE__*/React.createElement("div", null);
+      }
+
+      if (this.state.openToNetwork) {
+        networkConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+          htmlFor: "nodePort"
+        }, "Network Port (must be between 30000-32767, leave blank for random):"), /*#__PURE__*/React.createElement("input", {
+          type: "text",
+          id: "node-port",
+          name: "nodePort",
+          value: this.state.nodePort,
+          onChange: this.handleChange
+        }));
+      } else {
+        networkConfigGen = /*#__PURE__*/React.createElement("div", null);
+      }
+
+      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, appConfigGen, /*#__PURE__*/React.createElement("label", {
         htmlFor: "netProtocol"
       }, "Port Protocol:"), /*#__PURE__*/React.createElement("select", {
         id: "net-protocol",

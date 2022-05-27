@@ -93,6 +93,8 @@ class DeployService extends React.Component {
             let body = await res.json();
             if (!res.ok) {
                 throw new Error("Status code " + res.status.toString() + " (" + res.statusText + ")\n" + JSON.stringify(body));
+            } else {
+                alert("Deployment created!")
             }
             //window.location.reload(true);
         } catch (error) {
@@ -103,7 +105,6 @@ class DeployService extends React.Component {
     render() {
         let deployConfigGen;
         let serviceConfigGen;
-        let networkConfigGen;
 
         if (!this.state.useRepoDeployConfig) {
             deployConfigGen = (
@@ -125,21 +126,37 @@ class DeployService extends React.Component {
             );
         }
 
-
-        if (this.state.openToNetwork) {
-            networkConfigGen = (
-                <div>
-                    <label htmlFor="nodePort">Network Port (must be between 30000-32767, leave blank for random):</label>
-                    <input type="text" id="node-port" name="nodePort" value={this.state.nodePort} onChange={this.handleChange} />
-                </div>
-            );
-        } else {
-            networkConfigGen = <div></div>;
-        }
-
         if (!this.state.useRepoServiceConfig) {
+            let appConfigGen;
+            let networkConfigGen;
+
+            if (this.state.useRepoDeployConfig) {
+                appConfigGen = (
+                    <div>
+                        <label htmlFor="appName">Application Name:</label>
+                        <input type="text" id="app-name" name="appName" value={this.state.appName} onChange={this.handleChange} /><br/>
+                    </div>
+                );
+
+            } else {
+                appConfigGen = <div></div>;
+            }
+
+
+            if (this.state.openToNetwork) {
+                networkConfigGen = (
+                    <div>
+                        <label htmlFor="nodePort">Network Port (must be between 30000-32767, leave blank for random):</label>
+                        <input type="text" id="node-port" name="nodePort" value={this.state.nodePort} onChange={this.handleChange} />
+                    </div>
+                );
+            } else {
+                networkConfigGen = <div></div>;
+            }
+
             serviceConfigGen = (
                 <div>
+                    {appConfigGen}
                     <label htmlFor="netProtocol">Port Protocol:</label>
                     <select id="net-protocol" name="netProtocol" value={this.state.netProtocol} onChange={this.handleChange}>
                         <option value="TCP">TCP</option>
