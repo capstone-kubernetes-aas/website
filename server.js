@@ -31,68 +31,101 @@ app.post('/deploy', async function (req, res) {
         service_config: null
     };
 
-    if (!req.body.useRepoConfig) {
-        const labels = {
-            app: req.body.appName.toString()//,
-            //tier: hasOwn(req.body.tier) ? req.body.appTier.toString() : null,
-            //role: hasOwn(req.body.role) ? req.body.appRole.toString() : null
-        };
+    if (!req.body.useRepoDeployConfig) {
+        let projectName = req.body.appName.toString();
+        let imageName = req.body.imageName.toString();
+
+        if (imageName == '') {
+            imageName = projectName + ":latest";
+        }
 
         reqBody.deploy_config = {
             apiVersion: "apps/v1",
             kind: "Deployment",
             metadata: {
-                name: labels.app + "-deployment"
+                name: projectName + "-deployment"
             },
             spec: {
                 selector: {
-                    matchLabels: labels
+                    matchLabels: {
+                        app: projectName + "-app"
+                    }
                 },
                 template: {
                     metadata: {
-                        labels: labels
+                        labels: {
+                            app: projectName + "-app"
+                        }
                     },
                     spec: {
                         containers: [{
-                            name: req.body.containerName,
-                            image: req.body.containerImage
+                            name: projectName + "-container",
+                            image: imageName
                         }],
                     }
                 },
                 replicas: req.body.replicas,
             }
         };
-
-        reqBody.service_config = {
-            apiVersion: "v1",
-            kind: "Service",
-            metadata: {
-                name: labels.app + "-service",
-                labels: {
-                    app: labels.app//,
-                    //tier: labels.tier,
-                    //role: labels.role
-                }
-            },
-            spec: {
-                selector: {
-                    app: labels.app//,
-                    //tier: labels.tier,
-                    //role: labels.role
-                },
-                ports: [{
-                    port: parseInt(req.body.servicePort),
-                    targetPort: parseInt(req.body.containerPort),
-                    protocol: req.body.netProtocol
-                }],
-                type: "ClusterIP"
-            }
-        };
     } else {
         if (req.body.deployConfigPath.toString() != '') {
             reqBody.deploy_config = req.body.deployConfigPath.toString();
         }
+    }
 
+    if (!req.body.useRepoServiceConfig) {
+        if (req.body.openToNetwork) {
+            reqBody.service_config = {
+                apiVersion: "v1",
+                kind: "Service",
+                metadata: {
+                    name: projectName + "-service",
+                    labels: {
+                        app: projectName + "-app"
+                    }
+                },
+                spec: {
+                    selector: {
+                        app: projectName + "-app"
+                    },
+                    ports: [{
+                        port: parseInt(req.body.containerPort),
+                        targetPort: parseInt(req.body.containerPort),
+                        protocol: req.body.netProtocol
+                    }],
+                    type: "NodeIP"
+                }
+            };
+            if (req.body.nodePort.toString() != '') {
+                let nodePort = parseInt(req.body.nodePort.toString());
+                if (nodePort >= 30000 && nodePort <= 32767) {
+                    reqBody.service_config.spec.ports[0].nodePort = nodePort;
+                }
+            }
+        } else {
+            reqBody.service_config = {
+                apiVersion: "v1",
+                kind: "Service",
+                metadata: {
+                    name: projectName + "-service",
+                    labels: {
+                        app: projectName + "-app"
+                    }
+                },
+                spec: {
+                    selector: {
+                        app: projectName + "-app"
+                    },
+                    ports: [{
+                        port: parseInt(req.body.containerPort),
+                        targetPort: parseInt(req.body.containerPort),
+                        protocol: req.body.netProtocol
+                    }],
+                    type: "ClusterIP"
+                }
+            };
+        }
+    } else {
         if (req.body.serviceConfigPath.toString() != '') {
             reqBody.service_config = req.body.serviceConfigPath.toString();
         }
@@ -106,6 +139,7 @@ app.post('/deploy', async function (req, res) {
     let resBody;
     let url = 'http://127.0.0.1:8800/build';
     //let url = 'http://127.0.0.1:12345/build';
+    //let url = 'http://127.0.0.1:28070/build';
 
     await axios.post(url, reqBody, {headers: {"content-type": "application/json"}})
         .then(function (response) {
@@ -134,9 +168,11 @@ app.post('/deploy', async function (req, res) {
     res.status(status).json(resBody);
 });
 
-// app.post('/build', function (req, res) {
-//     res.status(500).json({err: "Failed to build: <build error>"});
-// });
+app.post('/build', function (req, res) {
+    console.log("build service: JSON received:");
+    console.log(JSON.stringify(req.body));
+    res.status(500).json({err: "Failed to build: <build error>"});
+});
 
 // open up server to traffic
 if ("host" in argv) {

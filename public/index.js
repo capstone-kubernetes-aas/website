@@ -74,17 +74,16 @@ class DeployService extends React.Component {
     this.state = {
       repoUrl: '',
       repoBranch: '',
-      useRepoConfig: false,
+      useRepoDeployConfig: false,
+      useRepoServiceConfig: false,
       deployConfigPath: '',
       serviceConfigPath: '',
       appName: '',
-      //appTier: '',
-      //appRole: '',
-      containerName: '',
-      containerImage: '',
-      containerPort: '',
-      servicePort: '',
+      imageName: '',
       netProtocol: 'TCP',
+      containerPort: '',
+      openToNetwork: false,
+      nodePort: '',
       replicas: 1
     };
     this.handleChange = this.handleChange.bind(this);
@@ -117,19 +116,20 @@ class DeployService extends React.Component {
 
       if (!res.ok) {
         throw new Error("Status code " + res.status.toString() + " (" + res.statusText + ")\n" + JSON.stringify(body));
-      }
+      } //window.location.reload(true);
 
-      window.location.reload(true);
     } catch (error) {
       alert(error.message);
     }
   }
 
   render() {
-    let configGen;
+    let deployConfigGen;
+    let serviceConfigGen;
+    let networkConfigGen;
 
-    if (!this.state.useRepoConfig) {
-      configGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    if (!this.state.useRepoDeployConfig) {
+      deployConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
         htmlFor: "appName"
       }, "Application Name:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
@@ -138,38 +138,52 @@ class DeployService extends React.Component {
         value: this.state.appName,
         onChange: this.handleChange
       }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
-        htmlFor: "containerName"
-      }, "Container Name:"), /*#__PURE__*/React.createElement("input", {
+        htmlFor: "imageName"
+      }, "Image Name (leave blank to use the same name):"), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        id: "container-name",
-        name: "containerName",
-        value: this.state.containerName,
+        id: "image-name",
+        name: "imageName",
+        value: this.state.imageName,
         onChange: this.handleChange
       }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
-        htmlFor: "containerImage"
-      }, "Container Image:"), /*#__PURE__*/React.createElement("input", {
-        type: "text",
-        id: "container-image",
-        name: "containerImage",
-        value: this.state.containerImage,
+        htmlFor: "replicas"
+      }, "Number of containers to build:"), /*#__PURE__*/React.createElement("input", {
+        type: "number",
+        id: "replicas",
+        name: "replicas",
+        value: this.state.replicas,
+        min: "1",
+        max: "8",
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
-        htmlFor: "containerPort"
-      }, "Container Port:"), /*#__PURE__*/React.createElement("input", {
+      }));
+    } else {
+      deployConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+        htmlFor: "deployConfigPath"
+      }, "Deployment Config Path:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        id: "container-port",
-        name: "containerPort",
-        value: this.state.containerPort,
+        id: "deploy-config-path",
+        name: "deployConfigPath",
+        value: this.state.deployConfigPath,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
-        htmlFor: "servicePort"
-      }, "Service Port:"), /*#__PURE__*/React.createElement("input", {
+      }));
+    }
+
+    if (this.state.openToNetwork) {
+      networkConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+        htmlFor: "nodePort"
+      }, "Network Port (must be between 30000-32767, leave blank for random):"), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        id: "service-port",
-        name: "servicePort",
-        value: this.state.servicePort,
+        id: "node-port",
+        name: "nodePort",
+        value: this.state.nodePort,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
+      }));
+    } else {
+      networkConfigGen = /*#__PURE__*/React.createElement("div", null);
+    }
+
+    if (!this.state.useRepoServiceConfig) {
+      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
         htmlFor: "netProtocol"
       }, "Port Protocol:"), /*#__PURE__*/React.createElement("select", {
         id: "net-protocol",
@@ -183,26 +197,24 @@ class DeployService extends React.Component {
       }, "UDP"), /*#__PURE__*/React.createElement("option", {
         value: "SCTP"
       }, "SCTP")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
-        htmlFor: "replicas"
-      }, "Number of containers to build:"), /*#__PURE__*/React.createElement("input", {
-        type: "number",
-        id: "replicas",
-        name: "replicas",
-        value: this.state.replicas,
-        min: "1",
-        max: "8",
-        onChange: this.handleChange
-      }));
-    } else {
-      configGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
-        htmlFor: "deployConfigPath"
-      }, "Deployment Config Path:"), /*#__PURE__*/React.createElement("input", {
+        htmlFor: "containerPort"
+      }, "Container Port:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
-        id: "deploy-config-path",
-        name: "deployConfigPath",
-        value: this.state.deployConfigPath,
+        id: "container-port",
+        name: "containerPort",
+        value: this.state.containerPort,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
+      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+        type: "checkbox",
+        id: "open-to-network",
+        name: "openToNetwork",
+        checked: this.state.openToNetwork,
+        onChange: this.handleChange
+      }), /*#__PURE__*/React.createElement("label", {
+        htmlFor: "openToNetwork"
+      }, "Open to port on network"), /*#__PURE__*/React.createElement("br", null), networkConfigGen);
+    } else {
+      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
         htmlFor: "serviceConfigPath"
       }, "Service Config Path:"), /*#__PURE__*/React.createElement("input", {
         type: "text",
@@ -219,7 +231,9 @@ class DeployService extends React.Component {
     }, /*#__PURE__*/React.createElement("h2", null, "Deploy New Service"), /*#__PURE__*/React.createElement("form", {
       id: "deploy-form",
       onSubmit: this.handleSubmit
-    }, /*#__PURE__*/React.createElement("label", {
+    }, /*#__PURE__*/React.createElement("h3", {
+      className: "form-header"
+    }, "Image"), /*#__PURE__*/React.createElement("label", {
       htmlFor: "repoUrl"
     }, "GitHub Repository URL:"), /*#__PURE__*/React.createElement("input", {
       type: "text",
@@ -235,15 +249,27 @@ class DeployService extends React.Component {
       name: "repoBranch",
       value: this.state.repoBranch,
       onChange: this.handleChange
-    }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("h3", {
+      className: "form-header"
+    }, "Deployment Configuration"), /*#__PURE__*/React.createElement("input", {
       type: "checkbox",
-      id: "use-config",
-      name: "useRepoConfig",
-      checked: this.state.useRepoConfig,
+      id: "use-repo-deploy-config",
+      name: "useRepoDeployConfig",
+      checked: this.state.useRepoDeployConfig,
       onChange: this.handleChange
     }), /*#__PURE__*/React.createElement("label", {
       htmlFor: "useRepoConfig"
-    }, "Use repository K8s configuration"), /*#__PURE__*/React.createElement("br", null), configGen, /*#__PURE__*/React.createElement("input", {
+    }, "Use repository K8s deployment config file"), /*#__PURE__*/React.createElement("br", null), deployConfigGen, /*#__PURE__*/React.createElement("h3", {
+      className: "form-header"
+    }, "Service Configuration"), /*#__PURE__*/React.createElement("input", {
+      type: "checkbox",
+      id: "use-repo-service-config",
+      name: "useRepoServiceConfig",
+      checked: this.state.useRepoServiceConfig,
+      onChange: this.handleChange
+    }), /*#__PURE__*/React.createElement("label", {
+      htmlFor: "useRepoConfig"
+    }, "Use repository K8s service config file"), /*#__PURE__*/React.createElement("br", null), serviceConfigGen, /*#__PURE__*/React.createElement("input", {
       type: "submit",
       id: "deploy-form-submit",
       value: "Deploy"
