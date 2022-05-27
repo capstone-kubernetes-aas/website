@@ -50,7 +50,7 @@ class DeployService extends React.Component {
         super(props);
         this.state = {
             repoUrl: '',
-            repoBranch: '',
+            repoBranch: 'main',
             useRepoDeployConfig: false,
             useRepoServiceConfig: false,
             deployConfigPath: '',
@@ -121,7 +121,7 @@ class DeployService extends React.Component {
             deployConfigGen = (
                 <div>
                     <label htmlFor="deployConfigPath">Deployment Config Path:</label>
-                    <input type="text" id="deploy-config-path" name="deployConfigPath" value={this.state.deployConfigPath} onChange={this.handleChange} />
+                    <input type="text" id="deploy-config-path" name="deployConfigPath" value={this.state.deployConfigPath} placeholder="kaas.deploy.yaml" onChange={this.handleChange} />
                 </div>
             );
         }
@@ -174,7 +174,7 @@ class DeployService extends React.Component {
             serviceConfigGen = (
                 <div>
                     <label htmlFor="serviceConfigPath">Service Config Path:</label>
-                    <input type="text" id="service-config-path" name="serviceConfigPath" value={this.state.serviceConfigPath} onChange={this.handleChange} />
+                    <input type="text" id="service-config-path" name="serviceConfigPath" value={this.state.serviceConfigPath} placeholder="kaas.deploy.yaml" onChange={this.handleChange} />
                 </div>
             );
         }
