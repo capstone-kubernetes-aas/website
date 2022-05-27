@@ -94,7 +94,7 @@ app.post('/deploy', async function (req, res) {
                         targetPort: parseInt(req.body.containerPort),
                         protocol: req.body.netProtocol
                     }],
-                    type: "NodeIP"
+                    type: "NodePort"
                 }
             };
             if (req.body.nodePort.toString() != '') {
