@@ -7,6 +7,7 @@ body {
 
 h1 {
     font-size: 2.5em;
+    text-align: center;
 }
 
 h2 {
@@ -110,3 +111,39 @@ p {
     display: inline-block;
     margin: 0px 172px;
 }
+
+.form-input {
+    text-align: right;
+    padding: 5px 0px;
+}
+
+.required-field {
+    color: brown;
+    /* font-weight: bold; */
+}
+
+#overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    width: 300px;
+    height: 200px;
+    line-height: 200px;
+    top: 40%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -150px;
+    background-color: lightblue;
+    text-align: center;
+    z-index: 101;
+}
+

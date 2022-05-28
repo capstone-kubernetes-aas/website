@@ -1,14 +1,8 @@
-class LogoutButton extends React.Component {
-  render() {
-    return /*#__PURE__*/React.createElement("button", {
-      id: "logout-button",
-      name: "logout",
-      type: "button"
-    }, "Logout");
-  }
-
-}
-
+/*class LogoutButton extends React.Component {
+    render() {
+        return <button id="logout-button" name="logout" type="button">Logout</button>
+    }
+}*/
 class Header extends React.Component {
   render() {
     return /*#__PURE__*/React.createElement("div", {
@@ -17,9 +11,7 @@ class Header extends React.Component {
       className: "title"
     }, /*#__PURE__*/React.createElement("h1", {
       className: "title-text"
-    }, "[Name Pending]")), /*#__PURE__*/React.createElement("div", {
-      className: "logout"
-    }, /*#__PURE__*/React.createElement(LogoutButton, null)));
+    }, "KubePi Pipeline")));
   }
 
 }
@@ -55,15 +47,7 @@ class Sidebar extends React.Component {
       name: "manage-services",
       type: "button",
       onClick: this.handleClick
-    }, "Manage Services")), /*#__PURE__*/React.createElement("li", {
-      className: "sidebar-tab"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: this.props.activeContent == "admin-settings" ? "active sidebar-option" : "sidebar-option",
-      id: "admin-settings-button",
-      name: "admin-settings",
-      type: "button",
-      onClick: this.handleClick
-    }, "Admin Settings"))));
+    }, "Manage Services"))));
   }
 
 }
@@ -79,7 +63,9 @@ class DeployService extends React.Component {
       deployConfigPath: '',
       serviceConfigPath: '',
       appName: '',
+      // tempAppName: '',
       imageName: '',
+      tempImageName: '',
       netProtocol: 'TCP',
       containerPort: '',
       openToNetwork: false,
@@ -93,7 +79,17 @@ class DeployService extends React.Component {
   handleChange(event) {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
+    const name = target.name; // if (name == "repoURL") {
+    //     newName = value.slice(19, value.length - 5);
+    //     this.setState({tempAppName: newName, tempImageName: newName + ":latest"});
+    // }
+
+    if (name == "appName") {
+      this.setState({
+        tempImageName: value + ":latest"
+      });
+    }
+
     this.setState({
       [name]: value
     });
@@ -101,6 +97,14 @@ class DeployService extends React.Component {
 
   async handleSubmit(event) {
     event.preventDefault();
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("modal").style.display = "block"; // if (this.state.appName == '') {
+    //     this.setState({appName: this.state.tempAppName});
+    // }
+    // if (this.state.imageName == '') {
+    //     this.setState({imageName: this.state.tempImageName});
+    // }
+
     let url = window.location.href + 'deploy';
     let requestOptions = {
       method: 'POST',
@@ -117,10 +121,14 @@ class DeployService extends React.Component {
       if (!res.ok) {
         throw new Error("Status code " + res.status.toString() + " (" + res.statusText + ")\n" + JSON.stringify(body));
       } else {
+        document.getElementById("overlay").style.display = "none";
+        document.getElementById("modal").style.display = "none";
         alert("Deployment created!");
       } //window.location.reload(true);
 
     } catch (error) {
+      document.getElementById("overlay").style.display = "none";
+      document.getElementById("modal").style.display = "none";
       alert(error.message);
     }
   }
@@ -130,25 +138,33 @@ class DeployService extends React.Component {
     let serviceConfigGen;
 
     if (!this.state.useRepoDeployConfig) {
-      deployConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+      deployConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
+        className: "required-field",
         htmlFor: "appName"
-      }, "Application Name:"), /*#__PURE__*/React.createElement("input", {
+      }, "Application Name "), /*#__PURE__*/React.createElement("input", {
         type: "text",
         id: "app-name",
         name: "appName",
         value: this.state.appName,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
+      }), /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
         htmlFor: "imageName"
-      }, "Image Name (leave blank to use the same name):"), /*#__PURE__*/React.createElement("input", {
+      }, "Image Name "), /*#__PURE__*/React.createElement("input", {
         type: "text",
         id: "image-name",
         name: "imageName",
         value: this.state.imageName,
+        placeholder: this.state.tempImageName,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
+      }), /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
         htmlFor: "replicas"
-      }, "Number of containers to build:"), /*#__PURE__*/React.createElement("input", {
+      }, "Number of Containers "), /*#__PURE__*/React.createElement("input", {
         type: "number",
         id: "replicas",
         name: "replicas",
@@ -156,11 +172,14 @@ class DeployService extends React.Component {
         min: "1",
         max: "8",
         onChange: this.handleChange
-      }));
+      })));
     } else {
-      deployConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+      deployConfigGen = /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
+        className: "required-field",
         htmlFor: "deployConfigPath"
-      }, "Deployment Config Path:"), /*#__PURE__*/React.createElement("input", {
+      }, "Deployment Config Path "), /*#__PURE__*/React.createElement("input", {
         type: "text",
         id: "deploy-config-path",
         name: "deployConfigPath",
@@ -175,26 +194,32 @@ class DeployService extends React.Component {
       let networkConfigGen;
 
       if (this.state.useRepoDeployConfig) {
-        appConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+        appConfigGen = /*#__PURE__*/React.createElement("div", {
+          className: "form-input"
+        }, /*#__PURE__*/React.createElement("label", {
+          className: "required-field",
           htmlFor: "appName"
-        }, "Application Name:"), /*#__PURE__*/React.createElement("input", {
+        }, "Application Name "), /*#__PURE__*/React.createElement("input", {
           type: "text",
           id: "app-name",
           name: "appName",
           value: this.state.appName,
           onChange: this.handleChange
-        }), /*#__PURE__*/React.createElement("br", null));
+        }));
       } else {
         appConfigGen = /*#__PURE__*/React.createElement("div", null);
       }
 
       if (this.state.openToNetwork) {
-        networkConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+        networkConfigGen = /*#__PURE__*/React.createElement("div", {
+          className: "form-input"
+        }, /*#__PURE__*/React.createElement("label", {
           htmlFor: "nodePort"
-        }, "Network Port (must be between 30000-32767, leave blank for random):"), /*#__PURE__*/React.createElement("input", {
+        }, "Network Port "), /*#__PURE__*/React.createElement("input", {
           type: "text",
           id: "node-port",
           name: "nodePort",
+          placeholder: "30000-32767",
           value: this.state.nodePort,
           onChange: this.handleChange
         }));
@@ -202,9 +227,11 @@ class DeployService extends React.Component {
         networkConfigGen = /*#__PURE__*/React.createElement("div", null);
       }
 
-      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, appConfigGen, /*#__PURE__*/React.createElement("label", {
+      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, appConfigGen, /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
         htmlFor: "netProtocol"
-      }, "Port Protocol:"), /*#__PURE__*/React.createElement("select", {
+      }, "Port Protocol "), /*#__PURE__*/React.createElement("select", {
         id: "net-protocol",
         name: "netProtocol",
         value: this.state.netProtocol,
@@ -215,32 +242,40 @@ class DeployService extends React.Component {
         value: "UDP"
       }, "UDP"), /*#__PURE__*/React.createElement("option", {
         value: "SCTP"
-      }, "SCTP")), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
+      }, "SCTP"))), /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
+        className: "required-field",
         htmlFor: "containerPort"
-      }, "Container Port:"), /*#__PURE__*/React.createElement("input", {
+      }, "Container Port "), /*#__PURE__*/React.createElement("input", {
         type: "text",
         id: "container-port",
         name: "containerPort",
         value: this.state.containerPort,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+      }), /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
+        htmlFor: "openToNetwork"
+      }, "Open to port on network"), /*#__PURE__*/React.createElement("input", {
         type: "checkbox",
         id: "open-to-network",
         name: "openToNetwork",
         checked: this.state.openToNetwork,
         onChange: this.handleChange
-      }), /*#__PURE__*/React.createElement("label", {
-        htmlFor: "openToNetwork"
-      }, "Open to port on network"), /*#__PURE__*/React.createElement("br", null), networkConfigGen);
+      }), /*#__PURE__*/React.createElement("br", null)), networkConfigGen);
     } else {
-      serviceConfigGen = /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+      serviceConfigGen = /*#__PURE__*/React.createElement("div", {
+        className: "form-input"
+      }, /*#__PURE__*/React.createElement("label", {
+        className: "required-field",
         htmlFor: "serviceConfigPath"
-      }, "Service Config Path:"), /*#__PURE__*/React.createElement("input", {
+      }, "Service Config Path "), /*#__PURE__*/React.createElement("input", {
         type: "text",
         id: "service-config-path",
         name: "serviceConfigPath",
-        value: this.state.serviceConfigPath,
         placeholder: "kaas.deploy.yaml",
+        value: this.state.serviceConfigPath,
         onChange: this.handleChange
       }));
     }
@@ -248,52 +283,67 @@ class DeployService extends React.Component {
     return /*#__PURE__*/React.createElement("div", {
       className: "content-wrapper",
       id: "deploy-service"
-    }, /*#__PURE__*/React.createElement("h2", null, "Deploy New Service"), /*#__PURE__*/React.createElement("form", {
+    }, /*#__PURE__*/React.createElement("h2", null, "Deploy New Service"), /*#__PURE__*/React.createElement("p", null, "Selections in red are required, the rest can be left blank to be generated."), /*#__PURE__*/React.createElement("form", {
       id: "deploy-form",
       onSubmit: this.handleSubmit
     }, /*#__PURE__*/React.createElement("h3", {
       className: "form-header"
-    }, "Image"), /*#__PURE__*/React.createElement("label", {
+    }, "Image"), /*#__PURE__*/React.createElement("div", {
+      className: "form-input"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "required-field",
       htmlFor: "repoUrl"
-    }, "GitHub Repository URL:"), /*#__PURE__*/React.createElement("input", {
+    }, "GitHub Repository URL "), /*#__PURE__*/React.createElement("input", {
       type: "text",
       id: "repo-url",
       name: "repoUrl",
       value: this.state.repoUrl,
       onChange: this.handleChange
-    }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", {
+    }), /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", {
+      className: "form-input"
+    }, /*#__PURE__*/React.createElement("label", {
       htmlFor: "repoBranch"
-    }, "Repository Branch:"), /*#__PURE__*/React.createElement("input", {
+    }, "Repository Branch "), /*#__PURE__*/React.createElement("input", {
       type: "text",
       id: "repo-branch",
       name: "repoBranch",
       value: this.state.repoBranch,
       onChange: this.handleChange
-    }), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("h3", {
+    }), /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("h3", {
       className: "form-header"
-    }, "Deployment Configuration"), /*#__PURE__*/React.createElement("input", {
+    }, "Deployment Configuration"), /*#__PURE__*/React.createElement("div", {
+      className: "form-input"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "useRepoDeployConfig"
+    }, "Use repository K8s deployment config file"), /*#__PURE__*/React.createElement("input", {
       type: "checkbox",
       id: "use-repo-deploy-config",
       name: "useRepoDeployConfig",
       checked: this.state.useRepoDeployConfig,
       onChange: this.handleChange
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "useRepoConfig"
-    }, "Use repository K8s deployment config file"), /*#__PURE__*/React.createElement("br", null), deployConfigGen, /*#__PURE__*/React.createElement("h3", {
+    }), /*#__PURE__*/React.createElement("br", null)), deployConfigGen, /*#__PURE__*/React.createElement("h3", {
       className: "form-header"
-    }, "Service Configuration"), /*#__PURE__*/React.createElement("input", {
+    }, "Service Configuration"), /*#__PURE__*/React.createElement("div", {
+      className: "form-input"
+    }, /*#__PURE__*/React.createElement("label", {
+      htmlFor: "useRepoServiceConfig"
+    }, "Use repository K8s service config file"), /*#__PURE__*/React.createElement("input", {
       type: "checkbox",
       id: "use-repo-service-config",
       name: "useRepoServiceConfig",
       checked: this.state.useRepoServiceConfig,
       onChange: this.handleChange
-    }), /*#__PURE__*/React.createElement("label", {
-      htmlFor: "useRepoConfig"
-    }, "Use repository K8s service config file"), /*#__PURE__*/React.createElement("br", null), serviceConfigGen, /*#__PURE__*/React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("br", null)), serviceConfigGen, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("div", {
+      className: "form-input"
+    }, /*#__PURE__*/React.createElement("input", {
       type: "submit",
       id: "deploy-form-submit",
       value: "Deploy"
-    })));
+    }))), /*#__PURE__*/React.createElement("div", {
+      id: "overlay"
+    }), /*#__PURE__*/React.createElement("div", {
+      id: "modal"
+    }, "Deploying Service..."));
   }
 
 }
@@ -303,20 +353,23 @@ class ClusterManagement extends React.Component {
     return /*#__PURE__*/React.createElement("div", {
       className: "content-wrapper",
       id: "manage-services"
-    }, /*#__PURE__*/React.createElement("h2", null, "Manage services"), /*#__PURE__*/React.createElement("p", null, "Manage services not enabled yet"));
+    }, /*#__PURE__*/React.createElement("h2", null, "Manage services"), /*#__PURE__*/React.createElement("a", {
+      href: "https://dashboard.capstone.detjens.dev/",
+      target: "_blank"
+    }, "Connect to dashboard"));
   }
 
-}
+} // class AdminSettings extends React.Component {
+//     render() {
+//         return (
+//             <div className="content-wrapper" id="admin-settings">
+//                 <h2>Admin Settings</h2>
+//                 <p>Admin settings not enabled yet</p>
+//             </div>
+//         );
+//     }
+// }
 
-class AdminSettings extends React.Component {
-  render() {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "content-wrapper",
-      id: "admin-settings"
-    }, /*#__PURE__*/React.createElement("h2", null, "Admin Settings"), /*#__PURE__*/React.createElement("p", null, "Admin settings not enabled yet"));
-  }
-
-}
 
 class Error404Page extends React.Component {
   render() {
@@ -346,9 +399,8 @@ class App extends React.Component {
     if (this.state.activeContent == "deploy-service") {
       content = /*#__PURE__*/React.createElement(DeployService, null);
     } else if (this.state.activeContent == "manage-services") {
-      content = /*#__PURE__*/React.createElement(ClusterManagement, null);
-    } else if (this.state.activeContent == "admin-settings") {
-      content = /*#__PURE__*/React.createElement(AdminSettings, null);
+      content = /*#__PURE__*/React.createElement(ClusterManagement, null); // } else if (this.state.activeContent == "admin-settings") {
+      //     content = <AdminSettings />
     } else {
       content = /*#__PURE__*/React.createElement(Error404Page, null);
     }
